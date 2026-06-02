@@ -4,8 +4,6 @@ import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-
-
 import arrowIcon from "/images/icon-arrow.svg";
 import patternDesktop from "/images/pattern-bg-desktop.png";
 import patternMobile from "/images/pattern-bg-mobile.png";
@@ -44,9 +42,13 @@ export default function Tracker() {
     try {
       setLoading(true);
 
-      const res = await fetch(
-        `https://geo.ipify.org/api/v2/country,city?apiKey=${API_KEY}&ipAddress=${value}`,
-      );
+      const isIp = /^(\d{1,3}\.){3}\d{1,3}$/.test(value);
+
+      const url = isIp
+        ? `https://geo.ipify.org/api/v2/country,city?apiKey=${API_KEY}&ipAddress=${value}`
+        : `https://geo.ipify.org/api/v2/country,city?apiKey=${API_KEY}&domain=${value}`;
+
+      const res = await fetch(url);
 
       const data = await res.json();
 
@@ -98,7 +100,7 @@ export default function Tracker() {
             className="w-full px-5 py-4 rounded-l-2xl outline-1 bg-white text-[18px]"
           />
 
-          <button className="bg-black px-6 rounded-r-2xl hover:bg-gray-800 transition">
+          <button className="bg-black px-8 py-7 text-[18px] rounded-r-2xl hover:bg-gray-500 transition">
             <img src={arrowIcon} alt="arrow" />
           </button>
         </form>
